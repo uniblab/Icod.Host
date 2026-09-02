@@ -1,5 +1,8 @@
 # Icod.Host
 
+[![PR Staging build](https://github.com/uniblab/Icod.Host/actions/workflows/pull-request.yaml/badge.svg)](https://github.com/uniblab/Icod.Host/actions/workflows/pull-request.yaml)
+[![Main Release validation](https://github.com/uniblab/Icod.Host/actions/workflows/main.yaml/badge.svg?branch=main)](https://github.com/uniblab/Icod.Host/actions/workflows/main.yaml)
+
 `Icod.Host` is a cross-platform .NET library for factual host identity and
 processor-resource observation. It provides neutral system facts without tying
 callers to a command framework or to a command suite such as CoreUtils or
@@ -148,12 +151,32 @@ On Unix-like hosts:
 ./build.sh
 ```
 
-Both scripts support `clean`, `restore`, `build`, `test`, and `pack`. With no
-argument they run the complete local sequence.
+Both scripts support `clean`, `restore`, `build`, `test`, `pack`, and `validate`.
+With no argument they run:
 
-Pull requests build and test the Staging configuration on Windows, Ubuntu, and
-macOS. Pushes to `main` build and test Release on all three platforms and
-publish only after the Release matrix succeeds.
+```text
+clean -> restore -> build -> test -> pack -> validate
+```
+
+Local builds always use `Debug`.
+
+The repository lifecycle is:
+
+```text
+local build.*       -> Debug
+pull request        -> Staging
+push to main        -> Release validation
+v<semver> tag       -> Release publication
+```
+
+Pull requests build/test on Windows, Linux, and macOS; Linux additionally packs
+and verifies the exact Staging `.nupkg` / `.snupkg` artifacts. Pushes to `main`
+run validation-only Release builds on Windows x64/ARM64, Linux x64/ARM64, and
+macOS x64/ARM64. Only a `v*` tag whose commit is contained in `main` and whose
+version matches `PackageVersion` may publish to NuGet.org and GitHub Packages.
+
+See [`packaging/README.md`](packaging/README.md) for the current build and
+distribution contract.
 
 ## Author
 
